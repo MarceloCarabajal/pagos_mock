@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">PagosPrueba</string>
+
+    <string-array name="card_types">
+        <item>VISA</item>
+        <item>MASTERCARD</item>
+        <item>AMEX</item>
+    </string-array>
+
+    <string-array name="visa_options">
+        <item>Debito VISA</item>
+        <item>Credito VISA</item>
+        <item>Naranja</item>
+    </string-array>
+
+    <string-array name="master_options">
+        <item>Maestro</item>
+        <item>MasterCard</item>
+        <item>MasterDebit</item>
+    </string-array>
+
+    <string-array name="amex_options">
+        <item>AMEX</item>
+        <item>AMEX Corporativa</item>
+    </string-array>
+
+    <!-- Define arrays similares para MASTERCARD y AMEX -->
+
+</resources>
