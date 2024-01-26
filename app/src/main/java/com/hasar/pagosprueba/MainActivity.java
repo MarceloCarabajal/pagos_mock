@@ -2,6 +2,7 @@ package com.hasar.pagosprueba;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -132,7 +133,17 @@ public class MainActivity extends AppCompatActivity {
                 CharSequence cardType = cardTypeAdapter.getItem(cardTypeSp.getSelectedItemPosition());
 
                 // Verifica la opción seleccionada y configura el Spinner de cuotas
-                if ("VISA".equals(cardType)) {
+
+                if ("-".equals(cardType)) {
+                    CharSequence paymentMethod = paymentMethodAdapter.getItem(position);
+
+                    if ("-".equals(paymentMethod)) {
+                        //mostrar spinner de cuotas con el guion "-"
+                        ArrayAdapter<CharSequence> installmentsAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, new CharSequence[]{"-"});
+                        installmentsSp.setAdapter(installmentsAdapter);
+                        installmentsSp.setVisibility(View.VISIBLE);
+                    }
+                }else if ("VISA".equals(cardType)) {
                     CharSequence paymentMethod = paymentMethodAdapter.getItem(position);
 
                     if ("Debito VISA".equals(paymentMethod)) {
@@ -179,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-            /*operationButton.setOnClickListener(new View.OnClickListener() {
+            operationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Genera datos ficticios para simular una respuesta de pago exitosa
+                // genero datos ficticios para simular una respuesta de pago exitosa
                 String authorizationCode = "MOCK_AUTHORIZATION_CODE";
                 String paymentGateway = "MOCK_PAYMENT_GATEWAY";
                 String uniqueNumber = "MOCK_UNIQUE_NUMBER";
@@ -192,9 +203,32 @@ public class MainActivity extends AppCompatActivity {
                 String terminalNumber = "MOCK_TERMINAL_NUMBER";
                 String cardNumber = "**** **** **** 1234"; // Asume que el número de tarjeta es 16 dígitos
 
-                // Muestra los datos ficticios en la interfaz de usuario
+                // muestro los datos ficticios en la interfaz de usuario
+                //creo nuevo intent
+                Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+
+                //agrego los datos al intent
+                intent.putExtra("authorizationCode", authorizationCode);
+                intent.putExtra("paymentGateway", paymentGateway);
+                intent.putExtra("uniqueNumber", uniqueNumber);
+                intent.putExtra("batch", batch);
+                intent.putExtra("voucherNumber", voucherNumber);
+                intent.putExtra("commerceNumber", commerceNumber);
+                intent.putExtra("terminalNumber", terminalNumber);
+                intent.putExtra("cardNumber", cardNumber);
+
+                //iniciar la segunda actividad
+                startActivity(intent);
+
+                //reestabler editText luego de enviar la info
+                amountInput.setText("");
+
+                //reestabler spinners luego de enviar la info
+                cardTypeSp.setSelection(0);
+                paymentMethodSp.setSelection(0);
+
             }
-        });*/
+        });
 
     }
 
