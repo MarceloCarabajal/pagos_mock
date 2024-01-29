@@ -15,6 +15,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
 
     private Spinner cardTypeSp, paymentMethodSp, installmentsSp;
@@ -171,12 +173,18 @@ public class MainActivity extends AppCompatActivity {
                         resultMessage = "Monto insuficiente";
                     } else if (amount == 10000) {
                         resultMessage = "Aprobado";
+
+                        //creo instancia de la clase Random
+                        Random rand = new Random();
+                        //genero num aleatorio entre 1000-1999
+                        int authorizationCode = rand.nextInt(1000) + 1000;
+
                         //genero datos ficticios de la operacion
                         String cardType = CardTypes.TYPES[cardTypeSp.getSelectedItemPosition()];
                         CharSequence paymentMethod = paymentMethodAdapter.getItem(paymentMethodSp.getSelectedItemPosition());
                         CharSequence installments = installmentsAdapter.getItem(installmentsSp.getSelectedItemPosition());
                         // genero el resto de datos ficticios para simular una respuesta de pago exitosa
-                        String authorizationCode = "MOCK_AUTHORIZATION_CODE";
+                        String authorizationCodeStr = String.valueOf(authorizationCode);
                         String paymentGateway = "MOCK_PAYMENT_GATEWAY";
                         String uniqueNumber = "MOCK_UNIQUE_NUMBER";
                         String batch = "MOCK_BATCH";
@@ -191,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("paymentMethod", paymentMethod.toString());
                         intent.putExtra("installments", installments.toString());
                         //agrego los datos al intent
-                        intent.putExtra("authorizationCode", authorizationCode);
+                        intent.putExtra("authorizationCode", authorizationCodeStr);
                         intent.putExtra("paymentGateway", paymentGateway);
                         intent.putExtra("uniqueNumber", uniqueNumber);
                         intent.putExtra("batch", batch);

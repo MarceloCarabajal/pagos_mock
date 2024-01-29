@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Random;
+
 public class ResultActivity extends AppCompatActivity {
     TextView resultTextView;
     Button backButton;
@@ -27,7 +29,7 @@ public class ResultActivity extends AppCompatActivity {
         String cardType = intent.getStringExtra("cardType");
         String paymentMethod = intent.getStringExtra("paymentMethod");
         String installments = intent.getStringExtra("installments");
-        String authorizationCode = intent.getStringExtra("authorizathionCode");
+        String authorizationCode = intent.getStringExtra("authorizationCode");
         String paymentGateway = intent.getStringExtra("paymentGateway");
         String uniqueNumber = intent.getStringExtra("uniqueNumber");
         String batch = intent.getStringExtra("batch");
