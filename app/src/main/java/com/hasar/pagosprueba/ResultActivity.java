@@ -23,6 +23,10 @@ public class ResultActivity extends AppCompatActivity {
 
         //obtener los datos del intent
         Intent intent = getIntent();
+        String amount = intent.getStringExtra("amount");
+        String cardType = intent.getStringExtra("cardType");
+        String paymentMethod = intent.getStringExtra("paymentMethod");
+        String installments = intent.getStringExtra("installments");
         String authorizationCode = intent.getStringExtra("authorizathionCode");
         String paymentGateway = intent.getStringExtra("paymentGateway");
         String uniqueNumber = intent.getStringExtra("uniqueNumber");
@@ -32,10 +36,11 @@ public class ResultActivity extends AppCompatActivity {
         String terminalNumber = intent.getStringExtra("terminalNumber");
         String cardNumber = intent.getStringExtra("cardNumber");
 
-        resultTextView.setText("Authorization Code: " + authorizationCode + "\nPayment Gateway: " +
-                paymentGateway + "\nUnique Number: " + uniqueNumber + "\nBatch: " + batch +
-                "\nVoucher Number: " + voucherNumber + "\nCommerce Number: "+ commerceNumber +
-                "\nTerminal Number: " + terminalNumber + "\nCard Number: " + cardNumber);
+        resultTextView.setText("Amount: " + amount + "\nCardBrand: " + cardType + "\nPayment Method: " + paymentMethod +
+                "\nInstallments: " + installments + "\nAuthorization Code: " + authorizationCode +
+                "\nPayment Gateway: " + paymentGateway + "\nUnique Number: " + uniqueNumber +
+                "\nBatch: " + batch + "\nVoucher Number: " + voucherNumber + "\nCommerce Number: " +
+                commerceNumber + "\nTerminal Number: " + terminalNumber + "\nCard Number: " + cardNumber);
 
         //------------------------------------------------------------
 

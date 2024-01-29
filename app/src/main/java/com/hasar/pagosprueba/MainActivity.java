@@ -13,12 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private Spinner cardTypeSp, paymentMethodSp, installmentsSp;
     private Button operationButton;
     private ArrayAdapter<CharSequence> paymentMethodAdapter;
+    private ArrayAdapter<CharSequence> installmentsAdapter;
     private EditText amountInput;
     private TextView brandLabel, paymentMethodLabel, installmentLabel;
 
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         brandLabel.setVisibility(View.GONE);
         paymentMethodLabel.setVisibility(View.GONE);
         installmentLabel.setVisibility(View.GONE);
-        
+
         //logica del ingreso de importe
         amountInput = findViewById(R.id.amountInput);
 
@@ -95,13 +97,14 @@ public class MainActivity extends AppCompatActivity {
         cardTypeSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Actualiza las opciones del segundo Spinner aca
+                // actualiza las opciones del segundo Spinner aca
                 String cardType = CardTypes.TYPES[position];
                 paymentMethodAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, CardOptions.OPTIONS.get(cardType));
                 paymentMethodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 paymentMethodSp.setAdapter(paymentMethodAdapter);
 
                 /*
+                //uso de string-array (en strings.xml)
                 if (position == 0) { // VISA
                     paymentMethodAdapter = ArrayAdapter.createFromResource(MainActivity.this, R.array.visa_options, android.R.layout.simple_spinner_item);
                     paymentMethodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -122,119 +125,83 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Hacer algo cuando no se selecciona ninguna opción
+                // hacer algo cuando no se selecciona ninguna opción
             }
         });
 
         paymentMethodSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Obtiene la opción seleccionada en el primer Spinner
-                CharSequence cardType = cardTypeAdapter.getItem(cardTypeSp.getSelectedItemPosition());
+                //obtener la opcion seleccionada en el primer spinner
+                CharSequence paymentMethod = paymentMethodAdapter.getItem(position);
 
-                // Verifica la opción seleccionada y configura el Spinner de cuotas
-
-                if ("-".equals(cardType)) {
-                    CharSequence paymentMethod = paymentMethodAdapter.getItem(position);
-
-                    if ("-".equals(paymentMethod)) {
-                        //mostrar spinner de cuotas con el guion "-"
-                        ArrayAdapter<CharSequence> installmentsAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, new CharSequence[]{"-"});
-                        installmentsSp.setAdapter(installmentsAdapter);
-                        installmentsSp.setVisibility(View.VISIBLE);
-                    }
-                }else if ("VISA".equals(cardType)) {
-                    CharSequence paymentMethod = paymentMethodAdapter.getItem(position);
-
-                    if ("Debito VISA".equals(paymentMethod)) {
-                        // Muestra el Spinner de cuotas con solo una opción
-                        ArrayAdapter<CharSequence> installmentsAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, new CharSequence[]{"1 Cuota"});
-                        installmentsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        installmentsSp.setAdapter(installmentsAdapter);
-                        installmentsSp.setVisibility(View.VISIBLE);
-                    } else if ("Credito VISA".equals(paymentMethod)) {
-                        // Muestra el Spinner de cuotas con opciones desde 1 hasta 36
-                        ArrayAdapter<CharSequence> installmentsAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item);
-                        for (int i = 1; i <= 36; i++) {
-                            installmentsAdapter.add("" + i + " Cuotas");
-                        }
-                        installmentsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        installmentsSp.setAdapter(installmentsAdapter);
-                        installmentsSp.setVisibility(View.VISIBLE);
-                    }
-                } else if ("MASTERCARD".equals(cardType)) {
-                    CharSequence paymentMethod = paymentMethodAdapter.getItem(position);
-                    if ("Maestro".equals(paymentMethod) || "MasterCard".equals(paymentMethod)) {
-                        //muestra spinner de cuotas con solo una opcion
-                        ArrayAdapter<CharSequence> installmentsAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, new CharSequence[]{"1 Cuota"});
-                        installmentsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        installmentsSp.setAdapter(installmentsAdapter);
-                        installmentsSp.setVisibility(View.VISIBLE);
-                    } else if ("MasterDebit".equals(paymentMethod)) {
-                        //muestro spinner de cuotas con opciones desde 1 hasta 36
-                        ArrayAdapter<CharSequence> installlmentsAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item);
-                        for (int i = 1; i <= 36; i++) {
-                            installlmentsAdapter.add("" + i + " Cuotas");
-                        }
-                        installlmentsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        installmentsSp.setAdapter(installlmentsAdapter);
-                        installmentsSp.setVisibility(View.VISIBLE);
-                    }
-
-                }
+                //verificar opcion seleccionada y configurar spinner de cuotas
+                String[] installmentsOptions = InstallmentsOptions.OPTIONS.get(paymentMethod);
+                installmentsAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, installmentsOptions);
+                installmentsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                installmentsSp.setAdapter(installmentsAdapter);
+                installmentsSp.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Haz algo cuando no se selecciona ninguna opción
+                //hacer algo cuando no se selecciona ninguna opcion
             }
         });
-
-            operationButton.setOnClickListener(new View.OnClickListener() {
+        operationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // genero datos ficticios para simular una respuesta de pago exitosa
-                String authorizationCode = "MOCK_AUTHORIZATION_CODE";
-                String paymentGateway = "MOCK_PAYMENT_GATEWAY";
-                String uniqueNumber = "MOCK_UNIQUE_NUMBER";
-                String batch = "MOCK_BATCH";
-                String voucherNumber = "MOCK_VOUCHER_NUMBER";
-                String commerceNumber = "MOCK_COMMERCE_NUMBER";
-                String terminalNumber = "MOCK_TERMINAL_NUMBER";
-                String cardNumber = "**** **** **** 1234"; // Asume que el número de tarjeta es 16 dígitos
+                //validar si todos los campos requeridos estan seleccionados
+                if(amountInput.getText().toString().isEmpty() ||
+                    cardTypeSp.getSelectedItemPosition() == 0 ){
+                    //mostrar mensaje de error
+                    Toast.makeText(MainActivity.this, "Ingresar todos los campos requeridos", Toast.LENGTH_SHORT).show();
+                } else {
+                    //genero datos ficticios de la operacion
+                    String amount = amountInput.getText().toString();
+                    String cardType = CardTypes.TYPES[cardTypeSp.getSelectedItemPosition()];
+                    CharSequence paymentMethod = paymentMethodAdapter.getItem(paymentMethodSp.getSelectedItemPosition());
+                    CharSequence installments = installmentsAdapter.getItem(installmentsSp.getSelectedItemPosition());
+                    // genero el resto de datos ficticios para simular una respuesta de pago exitosa
+                    String authorizationCode = "MOCK_AUTHORIZATION_CODE";
+                    String paymentGateway = "MOCK_PAYMENT_GATEWAY";
+                    String uniqueNumber = "MOCK_UNIQUE_NUMBER";
+                    String batch = "MOCK_BATCH";
+                    String voucherNumber = "MOCK_VOUCHER_NUMBER";
+                    String commerceNumber = "MOCK_COMMERCE_NUMBER";
+                    String terminalNumber = "MOCK_TERMINAL_NUMBER";
+                    String cardNumber = "**** **** **** 1234"; // Asume que el número de tarjeta es 16 dígitos
 
-                // muestro los datos ficticios en la interfaz de usuario
-                //creo nuevo intent
-                Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+                    // muestro los datos ficticios en la interfaz de usuario
+                    //creo nuevo intent
+                    Intent intent = new Intent(MainActivity.this, ResultActivity.class);
 
-                //agrego los datos al intent
-                intent.putExtra("authorizationCode", authorizationCode);
-                intent.putExtra("paymentGateway", paymentGateway);
-                intent.putExtra("uniqueNumber", uniqueNumber);
-                intent.putExtra("batch", batch);
-                intent.putExtra("voucherNumber", voucherNumber);
-                intent.putExtra("commerceNumber", commerceNumber);
-                intent.putExtra("terminalNumber", terminalNumber);
-                intent.putExtra("cardNumber", cardNumber);
+                    //agrego los datos del a operacion al intent
+                    intent.putExtra("amount", amount);
+                    intent.putExtra("cardType", cardType);
+                    intent.putExtra("paymentMethod", paymentMethod.toString());
+                    intent.putExtra("installments", installments.toString());
+                    //agrego los datos al intent
+                    intent.putExtra("authorizationCode", authorizationCode);
+                    intent.putExtra("paymentGateway", paymentGateway);
+                    intent.putExtra("uniqueNumber", uniqueNumber);
+                    intent.putExtra("batch", batch);
+                    intent.putExtra("voucherNumber", voucherNumber);
+                    intent.putExtra("commerceNumber", commerceNumber);
+                    intent.putExtra("terminalNumber", terminalNumber);
+                    intent.putExtra("cardNumber", cardNumber);
 
-                //iniciar la segunda actividad
-                startActivity(intent);
+                    //iniciar la segunda actividad
+                    startActivity(intent);
 
-                //reestabler editText luego de enviar la info
-                amountInput.setText("");
+                    //reestabler editText luego de enviar la info
+                    amountInput.setText("");
 
-                //reestabler spinners luego de enviar la info
-                cardTypeSp.setSelection(0);
-                paymentMethodSp.setSelection(0);
-
+                    //reestabler spinners luego de enviar la info
+                    cardTypeSp.setSelection(0);
+                    paymentMethodSp.setSelection(0);
+                }
             }
         });
-
     }
-
-    /*private void operationButton() {
-        //obtener el monto ingresado en etAmount
-        double amount = Double.parseDouble(amountInput.getText().toString());
-
-    }*/
 }
