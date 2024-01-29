@@ -157,39 +157,58 @@ public class MainActivity extends AppCompatActivity {
                     //mostrar mensaje de error
                     Toast.makeText(MainActivity.this, "Ingresar todos los campos requeridos", Toast.LENGTH_SHORT).show();
                 } else {
-                    //genero datos ficticios de la operacion
-                    String amount = amountInput.getText().toString();
-                    String cardType = CardTypes.TYPES[cardTypeSp.getSelectedItemPosition()];
-                    CharSequence paymentMethod = paymentMethodAdapter.getItem(paymentMethodSp.getSelectedItemPosition());
-                    CharSequence installments = installmentsAdapter.getItem(installmentsSp.getSelectedItemPosition());
-                    // genero el resto de datos ficticios para simular una respuesta de pago exitosa
-                    String authorizationCode = "MOCK_AUTHORIZATION_CODE";
-                    String paymentGateway = "MOCK_PAYMENT_GATEWAY";
-                    String uniqueNumber = "MOCK_UNIQUE_NUMBER";
-                    String batch = "MOCK_BATCH";
-                    String voucherNumber = "MOCK_VOUCHER_NUMBER";
-                    String commerceNumber = "MOCK_COMMERCE_NUMBER";
-                    String terminalNumber = "MOCK_TERMINAL_NUMBER";
-                    String cardNumber = "**** **** **** 1234"; // Asume que el número de tarjeta es 16 dígitos
+                    //obtengo monto ingresado
+                    String amountStr = amountInput.getText().toString();
+                    double amount = Double.parseDouble(amountStr);
 
-                    // muestro los datos ficticios en la interfaz de usuario
-                    //creo nuevo intent
+                    //creo nuevo intent para la resultActivity
                     Intent intent = new Intent(MainActivity.this, ResultActivity.class);
 
-                    //agrego los datos del a operacion al intent
-                    intent.putExtra("amount", amount);
-                    intent.putExtra("cardType", cardType);
-                    intent.putExtra("paymentMethod", paymentMethod.toString());
-                    intent.putExtra("installments", installments.toString());
-                    //agrego los datos al intent
-                    intent.putExtra("authorizationCode", authorizationCode);
-                    intent.putExtra("paymentGateway", paymentGateway);
-                    intent.putExtra("uniqueNumber", uniqueNumber);
-                    intent.putExtra("batch", batch);
-                    intent.putExtra("voucherNumber", voucherNumber);
-                    intent.putExtra("commerceNumber", commerceNumber);
-                    intent.putExtra("terminalNumber", terminalNumber);
-                    intent.putExtra("cardNumber", cardNumber);
+                    //verificar el monto y agregar distintos mensajes
+                    String resultMessage;
+
+                    if (amount >= 0 && amount <= 2000){
+                        resultMessage = "Monto insuficiente";
+                    } else if (amount == 10000) {
+                        resultMessage = "Aprobado";
+                        //genero datos ficticios de la operacion
+                        String cardType = CardTypes.TYPES[cardTypeSp.getSelectedItemPosition()];
+                        CharSequence paymentMethod = paymentMethodAdapter.getItem(paymentMethodSp.getSelectedItemPosition());
+                        CharSequence installments = installmentsAdapter.getItem(installmentsSp.getSelectedItemPosition());
+                        // genero el resto de datos ficticios para simular una respuesta de pago exitosa
+                        String authorizationCode = "MOCK_AUTHORIZATION_CODE";
+                        String paymentGateway = "MOCK_PAYMENT_GATEWAY";
+                        String uniqueNumber = "MOCK_UNIQUE_NUMBER";
+                        String batch = "MOCK_BATCH";
+                        String voucherNumber = "MOCK_VOUCHER_NUMBER";
+                        String commerceNumber = "MOCK_COMMERCE_NUMBER";
+                        String terminalNumber = "MOCK_TERMINAL_NUMBER";
+                        String cardNumber = "**** **** **** 1234"; // Asume que el número de tarjeta es 16 dígitos
+
+                        //agrego los datos del a operacion al intent
+                        intent.putExtra("amount", amountStr);
+                        intent.putExtra("cardType", cardType);
+                        intent.putExtra("paymentMethod", paymentMethod.toString());
+                        intent.putExtra("installments", installments.toString());
+                        //agrego los datos al intent
+                        intent.putExtra("authorizationCode", authorizationCode);
+                        intent.putExtra("paymentGateway", paymentGateway);
+                        intent.putExtra("uniqueNumber", uniqueNumber);
+                        intent.putExtra("batch", batch);
+                        intent.putExtra("voucherNumber", voucherNumber);
+                        intent.putExtra("commerceNumber", commerceNumber);
+                        intent.putExtra("terminalNumber", terminalNumber);
+                        intent.putExtra("cardNumber", cardNumber);
+                    } else if (amount == 20000) {
+                        resultMessage = "Error de lectura";
+                    } else if (amount == 30000) {
+                        resultMessage = "Rechazado por pinpad";
+                    } else {
+                        resultMessage = "Otros";
+                    }
+
+                    //agrego mensaje al intent
+                    intent.putExtra("resultMessage", resultMessage);
 
                     //iniciar la segunda actividad
                     startActivity(intent);

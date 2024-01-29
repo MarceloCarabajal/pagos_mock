@@ -35,14 +35,19 @@ public class ResultActivity extends AppCompatActivity {
         String commerceNumber = intent.getStringExtra("commerceNumber");
         String terminalNumber = intent.getStringExtra("terminalNumber");
         String cardNumber = intent.getStringExtra("cardNumber");
+        String resultMessage = intent.getStringExtra("resultMessage");
 
-        resultTextView.setText("Amount: " + amount + "\nCardBrand: " + cardType + "\nPayment Method: " + paymentMethod +
-                "\nInstallments: " + installments + "\nAuthorization Code: " + authorizationCode +
-                "\nPayment Gateway: " + paymentGateway + "\nUnique Number: " + uniqueNumber +
-                "\nBatch: " + batch + "\nVoucher Number: " + voucherNumber + "\nCommerce Number: " +
-                commerceNumber + "\nTerminal Number: " + terminalNumber + "\nCard Number: " + cardNumber);
-
-        //------------------------------------------------------------
+        //muestro el mensaje y los datos si el monto es 10000
+        if (resultMessage.equals("Aprobado")){
+            resultTextView.setText("Amount: " + amount + "\nCardBrand: " + cardType + "\nPayment Method: " + paymentMethod +
+                    "\nInstallments: " + installments + "\nAuthorization Code: " + authorizationCode +
+                    "\nPayment Gateway: " + paymentGateway + "\nUnique Number: " + uniqueNumber +
+                    "\nBatch: " + batch + "\nVoucher Number: " + voucherNumber + "\nCommerce Number: " +
+                    commerceNumber + "\nTerminal Number: " + terminalNumber + "\nCard Number: " + cardNumber);
+        } else {
+            //muestro solo el mensaje para cualquier otro monto
+            resultTextView.setText(resultMessage);
+        }
 
         //listener para que al clickear boton, vuelva atras
         backButton.setOnClickListener(new View.OnClickListener() {
