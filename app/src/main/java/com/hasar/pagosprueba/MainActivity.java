@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<CharSequence> installmentsAdapter;
     private EditText amountInput;
     private TextView brandLabel, paymentMethodLabel, installmentLabel;
+    private CheckBox cashbackCheckbox;
+    private EditText cashbackAmountInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         operationButton = findViewById(R.id.operationButton);
         paymentMethodLabel = findViewById(R.id.paymentMethodLabel);
         installmentLabel = findViewById(R.id.installmentsLabel);
+        cashbackCheckbox = findViewById(R.id.cashbackCheckbox);
+        cashbackAmountInput = findViewById(R.id.cashbackAmountInput);
 
         //ocultar spinners
         cardTypeSp.setVisibility(View.GONE);
@@ -48,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         brandLabel.setVisibility(View.GONE);
         paymentMethodLabel.setVisibility(View.GONE);
         installmentLabel.setVisibility(View.GONE);
+        //ocultar checkbox y editText
+        cashbackCheckbox.setVisibility(View.GONE);
+        cashbackAmountInput.setVisibility(View.GONE);
 
         //logica del ingreso de importe
         amountInput = findViewById(R.id.amountInput);
@@ -90,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
 
         //creacion de los spinners con sus adapter
         ArrayAdapter<CharSequence> cardTypeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, CardTypes.TYPES);
@@ -134,8 +145,30 @@ public class MainActivity extends AppCompatActivity {
         paymentMethodSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
                 //obtener la opcion seleccionada en el primer spinner
                 CharSequence paymentMethod = paymentMethodAdapter.getItem(position);
+
+                //verificar si acepta cashback
+                if (paymentMethod.toString().equals("Debito VISA")) {
+                    cashbackCheckbox.setVisibility(View.VISIBLE);
+
+                    //logica del checkbox para cashback seleccionado y que aparezca el EditText
+                    cashbackCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if(isChecked) {
+                                cashbackAmountInput.setVisibility(View.VISIBLE);
+                            } else {
+                                cashbackAmountInput.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+
+                } else {
+                    cashbackCheckbox.setVisibility(View.GONE);
+                    cashbackAmountInput.setVisibility(View.GONE);
+                }
 
                 //verificar opcion seleccionada y configurar spinner de cuotas
                 String[] installmentsOptions = InstallmentsOptions.OPTIONS.get(paymentMethod);
@@ -155,9 +188,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //validar si todos los campos requeridos estan seleccionados
                 if(amountInput.getText().toString().isEmpty() ||
-                    cardTypeSp.getSelectedItemPosition() == 0 ){
+                    cardTypeSp.getSelectedItemPosition() == 0 ) {
                     //mostrar mensaje de error
                     Toast.makeText(MainActivity.this, "Ingresar todos los campos requeridos", Toast.LENGTH_SHORT).show();
+                } else if (cashbackCheckbox.isChecked() &&
+                        Double.parseDouble(cashbackAmountInput.getText().toString()) <= 0){
+                    //mostrar mensaje de error para el checkbox
+                    Toast.makeText(MainActivity.this, "El monto debe ser mayor a 0", Toast.LENGTH_SHORT).show();
                 } else {
                     //obtengo monto ingresado
                     String amountStr = amountInput.getText().toString();
@@ -227,6 +264,12 @@ public class MainActivity extends AppCompatActivity {
                     //reestabler spinners luego de enviar la info
                     cardTypeSp.setSelection(0);
                     paymentMethodSp.setSelection(0);
+
+                    //reestablecer checkbox y EditText al enviar la info
+                    cashbackCheckbox.setChecked(false);
+                    cashbackCheckbox.setVisibility(View.GONE);
+                    cashbackAmountInput.setText("");
+                    cashbackAmountInput.setVisibility(View.GONE);
                 }
             }
         });
