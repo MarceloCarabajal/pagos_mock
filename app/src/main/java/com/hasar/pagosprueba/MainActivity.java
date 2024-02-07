@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         //creacion de los spinners con sus adapter
         ArrayAdapter<CharSequence> cardTypeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, CardTypes.TYPES);
         cardTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -157,10 +156,11 @@ public class MainActivity extends AppCompatActivity {
                     cashbackCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            if(isChecked) {
+                            if (isChecked) {
                                 cashbackAmountInput.setVisibility(View.VISIBLE);
                             } else {
                                 cashbackAmountInput.setVisibility(View.GONE);
+                                cashbackAmountInput.setText("0");
                             }
                         }
                     });
@@ -183,93 +183,99 @@ public class MainActivity extends AppCompatActivity {
                 //hacer algo cuando no se selecciona ninguna opcion
             }
         });
+
         operationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //validar si todos los campos requeridos estan seleccionados
-                if(amountInput.getText().toString().isEmpty() ||
-                    cardTypeSp.getSelectedItemPosition() == 0 ) {
+                if (amountInput.getText().toString().isEmpty() ||
+                        cardTypeSp.getSelectedItemPosition() == 0) {
                     //mostrar mensaje de error
                     Toast.makeText(MainActivity.this, "Ingresar todos los campos requeridos", Toast.LENGTH_SHORT).show();
-                } else if (cashbackCheckbox.isChecked() &&
-                        Double.parseDouble(cashbackAmountInput.getText().toString()) <= 0){
-                    //mostrar mensaje de error para el checkbox
-                    Toast.makeText(MainActivity.this, "El monto debe ser mayor a 0", Toast.LENGTH_SHORT).show();
                 } else {
-                    //obtengo monto ingresado
-                    String amountStr = amountInput.getText().toString();
-                    double amount = Double.parseDouble(amountStr);
+                    //si el cashback esta marcado, obtener el valor ingresado
+                    String cashbackAmount = cashbackCheckbox.isChecked() ? cashbackAmountInput.getText().toString() : "0";
 
-                    //creo nuevo intent para la resultActivity
-                    Intent intent = new Intent(MainActivity.this, ResultActivity.class);
-
-                    //verificar el monto y agregar distintos mensajes
-                    String resultMessage;
-
-                    if (amount >= 0 && amount <= 2000){
-                        resultMessage = "Monto insuficiente";
-                    } else if (amount == 10000) {
-                        resultMessage = "Aprobado";
-
-                        //creo instancia de la clase Random
-                        Random rand = new Random();
-                        //genero num aleatorio entre 1000-1999
-                        int authorizationCode = rand.nextInt(1000) + 1000;
-
-                        //genero datos ficticios de la operacion
-                        String cardType = CardTypes.TYPES[cardTypeSp.getSelectedItemPosition()];
-                        CharSequence paymentMethod = paymentMethodAdapter.getItem(paymentMethodSp.getSelectedItemPosition());
-                        CharSequence installments = installmentsAdapter.getItem(installmentsSp.getSelectedItemPosition());
-                        // genero el resto de datos ficticios para simular una respuesta de pago exitosa
-                        String authorizationCodeStr = String.valueOf(authorizationCode);
-                        String paymentGateway = "MOCK_PAYMENT_GATEWAY";
-                        String uniqueNumber = "MOCK_UNIQUE_NUMBER";
-                        String batch = "MOCK_BATCH";
-                        String voucherNumber = "MOCK_VOUCHER_NUMBER";
-                        String commerceNumber = "MOCK_COMMERCE_NUMBER";
-                        String terminalNumber = "MOCK_TERMINAL_NUMBER";
-                        String cardNumber = "**** **** **** 1234"; // Asume que el número de tarjeta es 16 dígitos
-
-                        //agrego los datos del a operacion al intent
-                        intent.putExtra("amount", amountStr);
-                        intent.putExtra("cardType", cardType);
-                        intent.putExtra("paymentMethod", paymentMethod.toString());
-                        intent.putExtra("installments", installments.toString());
-                        //agrego los datos al intent
-                        intent.putExtra("authorizationCode", authorizationCodeStr);
-                        intent.putExtra("paymentGateway", paymentGateway);
-                        intent.putExtra("uniqueNumber", uniqueNumber);
-                        intent.putExtra("batch", batch);
-                        intent.putExtra("voucherNumber", voucherNumber);
-                        intent.putExtra("commerceNumber", commerceNumber);
-                        intent.putExtra("terminalNumber", terminalNumber);
-                        intent.putExtra("cardNumber", cardNumber);
-                    } else if (amount == 20000) {
-                        resultMessage = "Error de lectura";
-                    } else if (amount == 30000) {
-                        resultMessage = "Rechazado por pinpad";
+                    if (cashbackCheckbox.isChecked() && (cashbackAmount.isEmpty() || Double.parseDouble(cashbackAmount) <= 0)) {
+                        Toast.makeText(MainActivity.this, "El monto de cashback debe ser mayor a 0", Toast.LENGTH_SHORT).show();
                     } else {
-                        resultMessage = "Otros";
+                        //obtengo monto ingresado
+                        String amountStr = amountInput.getText().toString();
+                        double amount = Double.parseDouble(amountStr);
+
+                        //creo nuevo intent para la resultActivity
+                        Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+
+                        //verificar el monto y agregar distintos mensajes
+                        String resultMessage;
+
+                        if (amount >= 0 && amount <= 2000) {
+                            resultMessage = "Monto insuficiente";
+                        } else if (amount == 10000) {
+                            resultMessage = "Aprobado";
+
+                            //creo instancia de la clase Random
+                            Random rand = new Random();
+                            //genero num aleatorio entre 1000-1999
+                            int authorizationCode = rand.nextInt(1000) + 1000;
+
+                            //genero datos ficticios de la operacion
+                            String cardType = CardTypes.TYPES[cardTypeSp.getSelectedItemPosition()];
+                            CharSequence paymentMethod = paymentMethodAdapter.getItem(paymentMethodSp.getSelectedItemPosition());
+                            CharSequence installments = installmentsAdapter.getItem(installmentsSp.getSelectedItemPosition());
+                            // genero el resto de datos ficticios para simular una respuesta de pago exitosa
+                            String authorizationCodeStr = String.valueOf(authorizationCode);
+                            String paymentGateway = "MOCK_PAYMENT_GATEWAY";
+                            String uniqueNumber = "MOCK_UNIQUE_NUMBER";
+                            String batch = "MOCK_BATCH";
+                            String voucherNumber = "MOCK_VOUCHER_NUMBER";
+                            String commerceNumber = "MOCK_COMMERCE_NUMBER";
+                            String terminalNumber = "MOCK_TERMINAL_NUMBER";
+                            String cardNumber = "**** **** **** 1234"; // Asume que el número de tarjeta es 16 dígitos
+
+                            //agrego los datos del a operacion al intent
+                            intent.putExtra("amount", amountStr);
+                            intent.putExtra("cardType", cardType);
+                            intent.putExtra("paymentMethod", paymentMethod.toString());
+                            intent.putExtra("installments", installments.toString());
+                            intent.putExtra("isCashback", cashbackCheckbox.isChecked());
+                            intent.putExtra("cashbackAmount", cashbackAmount);
+                            //agrego los datos al intent
+                            intent.putExtra("authorizationCode", authorizationCodeStr);
+                            intent.putExtra("paymentGateway", paymentGateway);
+                            intent.putExtra("uniqueNumber", uniqueNumber);
+                            intent.putExtra("batch", batch);
+                            intent.putExtra("voucherNumber", voucherNumber);
+                            intent.putExtra("commerceNumber", commerceNumber);
+                            intent.putExtra("terminalNumber", terminalNumber);
+                            intent.putExtra("cardNumber", cardNumber);
+                        } else if (amount == 20000) {
+                            resultMessage = "Error de lectura";
+                        } else if (amount == 30000) {
+                            resultMessage = "Rechazado por pinpad";
+                        } else {
+                            resultMessage = "Otros";
+                        }
+
+                        //agrego mensaje al intent
+                        intent.putExtra("resultMessage", resultMessage);
+
+                        //iniciar la segunda actividad
+                        startActivity(intent);
+
+                        //reestabler editText luego de enviar la info
+                        amountInput.setText("");
+
+                        //reestabler spinners luego de enviar la info
+                        cardTypeSp.setSelection(0);
+                        paymentMethodSp.setSelection(0);
+
+                        //reestablecer checkbox y EditText al enviar la info
+                        cashbackCheckbox.setChecked(false);
+                        cashbackCheckbox.setVisibility(View.GONE);
+                        cashbackAmountInput.setText("");
+                        cashbackAmountInput.setVisibility(View.GONE);
                     }
-
-                    //agrego mensaje al intent
-                    intent.putExtra("resultMessage", resultMessage);
-
-                    //iniciar la segunda actividad
-                    startActivity(intent);
-
-                    //reestabler editText luego de enviar la info
-                    amountInput.setText("");
-
-                    //reestabler spinners luego de enviar la info
-                    cardTypeSp.setSelection(0);
-                    paymentMethodSp.setSelection(0);
-
-                    //reestablecer checkbox y EditText al enviar la info
-                    cashbackCheckbox.setChecked(false);
-                    cashbackCheckbox.setVisibility(View.GONE);
-                    cashbackAmountInput.setText("");
-                    cashbackAmountInput.setVisibility(View.GONE);
                 }
             }
         });
