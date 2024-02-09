@@ -38,11 +38,12 @@ public class ResultActivity extends AppCompatActivity {
         String voucherNumber = intent.getStringExtra("voucherNumber");
         String commerceNumber = intent.getStringExtra("commerceNumber");
         String terminalNumber = intent.getStringExtra("terminalNumber");
+        String cardHolderName = intent.getStringExtra("cardHolderName");
         String cardNumber = intent.getStringExtra("cardNumber");
         String resultMessage = intent.getStringExtra("resultMessage");
 
         //muestro el mensaje y los datos si el monto es 10000
-        if (resultMessage.equals("Aprobado")){
+        if (resultMessage.equals("Aprobado")) {
             StringBuilder resultText = new StringBuilder();
             resultText.append("Amount: $").append(amount).append("\n")
                     .append("Card Brand: ").append(cardType).append("\n")
@@ -55,19 +56,14 @@ public class ResultActivity extends AppCompatActivity {
                     .append("Voucher Number: ").append(voucherNumber).append("\n")
                     .append("Commerce Number: ").append(commerceNumber).append("\n")
                     .append("Terminal Number: ").append(terminalNumber).append("\n")
+                    .append("Card Holder Name: ").append(cardHolderName).append("\n")
                     .append("Card Number: ").append(cardNumber).append("\n");
 
-            if(isCashback){
+            if (isCashback) {
                 resultText.append("Cashback Amount: $").append(cashbackAmount);
             }
             resultTextView.setText(resultText.toString());
-            /*resultTextView.setText("Amount: $" + amount + "\nCardBrand: " + cardType +
-                    "\nPayment Method: " + paymentMethod + "\nInstallments: " + installments +
-                    "\nAuthorization Code: " + authorizationCode + "\nCashback Amount: $" + cashbackAmount +
-                    "\nPayment Gateway: " + paymentGateway + "\nUnique Number: " + uniqueNumber +
-                    "\nBatch: " + batch + "\nVoucher Number: " + voucherNumber +
-                    "\nCommerce Number: " + commerceNumber + "\nTerminal Number: " + terminalNumber +
-                    "\nCard Number: " + cardNumber);*/
+
         } else {
             //muestro solo el mensaje para cualquier otro monto
             resultTextView.setText(resultMessage);

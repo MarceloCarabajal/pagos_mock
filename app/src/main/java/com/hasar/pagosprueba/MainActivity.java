@@ -223,15 +223,47 @@ public class MainActivity extends AppCompatActivity {
                             String cardType = CardTypes.TYPES[cardTypeSp.getSelectedItemPosition()];
                             CharSequence paymentMethod = paymentMethodAdapter.getItem(paymentMethodSp.getSelectedItemPosition());
                             CharSequence installments = installmentsAdapter.getItem(installmentsSp.getSelectedItemPosition());
-                            // genero el resto de datos ficticios para simular una respuesta de pago exitosa
+                           // genero el resto de datos ficticios para simular una respuesta de pago exitosa
                             String authorizationCodeStr = String.valueOf(authorizationCode);
-                            String paymentGateway = "MOCK_PAYMENT_GATEWAY";
+                            String paymentGateway = CardTypes.TYPES[cardTypeSp.getSelectedItemPosition()];
                             String uniqueNumber = "MOCK_UNIQUE_NUMBER";
                             String batch = "MOCK_BATCH";
                             String voucherNumber = "MOCK_VOUCHER_NUMBER";
                             String commerceNumber = "MOCK_COMMERCE_NUMBER";
                             String terminalNumber = "MOCK_TERMINAL_NUMBER";
+                            String cardHolderName = "MOCK_CARD_HOLDER_NAME";
                             String cardNumber = "**** **** **** 1234"; // Asume que el número de tarjeta es 16 dígitos
+
+                            //validaciones de algunos campos del mock
+                            if(paymentMethod.equals("Debito VISA")){
+                                uniqueNumber = "111";
+                                batch = "456";
+                                voucherNumber = "10";
+                                commerceNumber = "11223344";
+                                terminalNumber = "42316578";
+                                cardHolderName = "Juan Carlos";
+                            } else if (paymentMethod.equals("Credito VISA")) {
+                                uniqueNumber = "112";
+                                batch = "456";
+                                voucherNumber = "20";
+                                commerceNumber = "11223344";
+                                terminalNumber = "42316578";
+                                cardHolderName = "Carlos Carlos";
+                            } else if (paymentMethod.equals("MasterCard")) {
+                                uniqueNumber = "113";
+                                batch = "567";
+                                voucherNumber = "30";
+                                commerceNumber = "22334455";
+                                terminalNumber = "42316578";
+                                cardHolderName = "Jose Perez";
+                            } else {
+                                uniqueNumber = "114";
+                                batch = "765";
+                                voucherNumber = "40";
+                                commerceNumber = "33445566";
+                                terminalNumber = "42316578";
+                                cardHolderName = "Kerly";
+                            }
 
                             //agrego los datos del a operacion al intent
                             intent.putExtra("amount", amountStr);
@@ -248,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("voucherNumber", voucherNumber);
                             intent.putExtra("commerceNumber", commerceNumber);
                             intent.putExtra("terminalNumber", terminalNumber);
+                            intent.putExtra("cardHolderName", cardHolderName);
                             intent.putExtra("cardNumber", cardNumber);
                         } else if (amount == 20000) {
                             resultMessage = "Error de lectura";
